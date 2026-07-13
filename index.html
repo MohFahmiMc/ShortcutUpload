@@ -3,143 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZipForge - Premium GitHub Deployer</title>
+    <title>ZipForge Studio Pro - Ultimate GitHub Deployer</title>
     <!-- Tailwind CSS v4 -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- JSZip Pustaka Ekstrasi -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
-        /* Custom scrollbar untuk log console agar rapi */
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: #0f172a;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 4px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: #475569;
-        }
+        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #0b1329; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #334155; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 font-sans min-h-screen flex items-center justify-center p-4 antialiased">
+<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 font-sans min-h-screen p-4 md:p-8 antialiased">
 
-    <div class="relative w-full max-w-xl">
-        <!-- Efek Cahaya Dekoratif Belakang Card -->
-        <div class="absolute -top-20 -left-20 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-20 -right-20 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- Container Utama Layout Grid Responsif -->
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 relative">
+        
+        <!-- Efek Glow Ambient -->
+        <div class="absolute top-1/4 left-1/3 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-1/3 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
-        <!-- Main Card Premium -->
-        <div class="backdrop-blur-md bg-slate-900/80 p-8 rounded-3xl shadow-2xl border border-slate-800 space-y-6 relative z-10">
+        <!-- PANEL KIRI: Konfigurasi & Upload (2 Kolom di Desktop) -->
+        <div class="lg:col-span-2 space-y-6">
             
-            <!-- Header -->
-            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                <div>
-                    <h1 class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-emerald-400 tracking-tight">
-                        ZipForge Studio
-                    </h1>
-                    <p class="text-xs text-slate-400 mt-1">Ekstrak otomatis berkas kompresi langsung ke GitHub Repository</p>
-                </div>
-                <span class="text-3xl animate-bounce duration-1000">🚀</span>
-            </div>
-
-            <!-- STEP 1: GitHub Authentication -->
-            <div class="space-y-3">
-                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest">1. Koneksi Akun GitHub</label>
-                <div class="flex gap-2">
-                    <div class="relative flex-1">
-                        <input type="password" id="githubToken" placeholder="Masukkan Personal Access Token (PAT)" 
-                            class="w-full bg-slate-950/60 border border-slate-700/60 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition pl-10 text-slate-200">
-                        <span class="absolute left-3.5 top-3.5 text-slate-500 text-sm">🔑</span>
+            <!-- Card Utama Form -->
+            <div class="backdrop-blur-md bg-slate-900/80 p-6 md:p-8 rounded-3xl shadow-2xl border border-slate-800/80 space-y-6">
+                <!-- Header -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-4 gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">⚡</span>
+                            <h1 class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-emerald-400 tracking-tight">ZipForge Studio Pro</h1>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Sistem otomatisasi unggah & ekstraksi dengan ketahanan refresh halaman.</p>
                     </div>
-                    <button id="btnConnect" class="bg-indigo-600 hover:bg-indigo-500 active:scale-98 text-white font-medium px-5 py-3 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/20 cursor-pointer flex items-center gap-2 shrink-0">
-                        <span id="connectText">Hubungkan</span>
-                        <div id="connectSpinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <!-- Badges Status Pemulihan Sesi -->
+                    <div id="recoveryBadge" class="hidden items-center gap-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[11px] font-mono px-2.5 py-1 rounded-lg">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Sesi Dipulihkan
+                    </div>
+                </div>
+
+                <!-- Bagian 1: Autentikasi -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest">1. Kredensial GitHub Access</label>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="password" id="githubToken" placeholder="Masukkan GitHub Personal Access Token (PAT)" 
+                            class="flex-1 bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition text-slate-200">
+                        <button id="btnConnect" class="bg-indigo-600 hover:bg-indigo-500 active:scale-98 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/10 cursor-pointer flex items-center justify-center gap-2 shrink-0">
+                            <span id="connectText">Koneksikan Akun</span>
+                            <div id="connectSpinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Profile Badge -->
+                <div id="profileBadge" class="hidden items-center gap-3 bg-slate-950/50 border border-slate-800/80 p-3 rounded-xl">
+                    <img id="userAvatar" src="" alt="Avatar" class="w-10 h-10 rounded-full border border-indigo-500/40">
+                    <div>
+                        <p class="text-xs text-slate-400">Akun Aktif</p>
+                        <p id="usernameDisplay" class="text-sm font-bold text-slate-200">-</p>
+                    </div>
+                    <button id="btnDisconnect" class="ml-auto text-xs text-red-400 hover:underline cursor-pointer">Putuskan</button>
+                </div>
+
+                <!-- Bagian 2: Konfigurasi Target & Strategi (Akan aktif setelah terkoneksi) -->
+                <div id="repoSection" class="opacity-30 pointer-events-none transition-all duration-300 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest">2. Repositori Tujuan</label>
+                            <div class="flex gap-2">
+                                <select id="repoAction" class="bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-500 text-slate-300">
+                                    <option value="select">Existing</option>
+                                    <option value="create">Buat Baru</option>
+                                </select>
+                                <select id="repoSelect" class="flex-1 bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-500 text-slate-200">
+                                    <option value="">-- Muat Repositori --</option>
+                                </select>
+                                <input type="text" id="newRepoInput" placeholder="Nama repo baru..." 
+                                    class="hidden flex-1 bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-500 text-slate-200">
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest">3. Metode Sinkronisasi</label>
+                            <select id="deployStrategy" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-500 text-slate-200">
+                                <option value="append">Upload & Update Saja (Amankan File Lain)</option>
+                                <option value="replace">Clean Replace (Hapus Semua File Lama di Repo)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Bagian 3: Dropzone Upload File -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest">4. Sumber File Kompresi (.zip)</label>
+                        <div id="dropzone" class="border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-2xl p-6 text-center cursor-pointer transition-all duration-300 bg-slate-950/20 group relative overflow-hidden">
+                            <input type="file" id="zipFile" accept=".zip" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
+                            <div class="space-y-1">
+                                <span class="text-3xl block group-hover:scale-110 transition-transform">📦</span>
+                                <p class="text-sm font-medium text-slate-300" id="fileName">Pilih berkas ZIP atau seret ke area ini</p>
+                                <p class="text-xs text-slate-500">Isi antrean akan disimpan otomatis agar aman dari refresh</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Eksekusi Utama -->
+                    <button id="btnDeploy" class="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:opacity-95 text-white font-bold py-4 rounded-xl text-sm transition-all shadow-xl shadow-indigo-600/10 cursor-pointer tracking-wider uppercase">
+                        Inisialisasi & Deploy Proyek
                     </button>
                 </div>
             </div>
 
-            <!-- Profile Badge (Hidden secara default, muncul jika sukses login) -->
-            <div id="profileBadge" class="hidden items-center gap-3 bg-slate-950/40 border border-slate-800 p-3 rounded-xl transition-all duration-300">
-                <img id="userAvatar" src="" alt="Avatar" class="w-10 h-10 rounded-full border border-indigo-500/50">
-                <div>
-                    <p class="text-xs text-slate-400">Terhubung sebagai</p>
-                    <p id="usernameDisplay" class="text-sm font-bold text-slate-200"></p>
-                </div>
-                <span class="ml-auto bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Aktif</span>
-            </div>
-
-            <!-- STEP 2: Repository Configuration (Disabled sampai terhubung) -->
-            <div id="repoSection" class="opacity-40 pointer-events-none transition-all duration-300 space-y-4">
-                <div class="space-y-3">
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest">2. Pilih Repositori Tujuan</label>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <select id="repoAction" class="bg-slate-950/60 border border-slate-700/60 rounded-xl px-3 py-3 text-sm focus:outline-none focus:border-indigo-500 text-slate-300">
-                            <option value="select">Pilih Existing</option>
-                            <option value="create">Buat Baru</option>
-                        </select>
-                        
-                        <!-- Dropdown list repo otomatis -->
-                        <select id="repoSelect" class="sm:col-span-2 bg-slate-950/60 border border-slate-700/60 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-slate-200 w-full">
-                            <option value="">-- Memuat Repositori --</option>
-                        </select>
-
-                        <!-- Input manual jika buat repo baru (Hidden default) -->
-                        <input type="text" id="newRepoInput" placeholder="Ketik nama repo baru..." 
-                            class="hidden sm:col-span-2 bg-slate-950/60 border border-slate-700/60 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-slate-200 w-full">
-                    </div>
-                </div>
-
-                <!-- STEP 3: File Compressor Dropzone -->
-                <div class="space-y-3">
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest">3. Unggah Berkas Berkompresi (.zip)</label>
-                    <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-indigo-500/70 rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 bg-slate-950/30 group relative overflow-hidden">
-                        <input type="file" id="zipFile" accept=".zip" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
-                        <div class="space-y-2 group-hover:scale-102 transition-transform duration-300">
-                            <span class="text-4xl block group-hover:animate-pulse">📂</span>
-                            <p class="text-sm font-medium text-slate-300" id="fileName">Pilih berkas atau seret ke area ini</p>
-                            <p class="text-xs text-slate-500">Mendukung format kompresi ZIP standar browser</p>
+            <!-- PANEL MONITORING REAL-TIME (Muncul saat upload berjalan) -->
+            <div id="monitorSection" class="hidden backdrop-blur-md bg-slate-900/80 p-6 rounded-3xl border border-slate-800 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <div class="space-y-0.5">
+                        <div id="progressStatus" class="text-sm font-bold text-slate-200 flex items-center gap-2">
+                            Processing...
                         </div>
+                        <p class="text-xs text-slate-400" id="fileCountStat">0 dari 0 file terproses</p>
+                    </div>
+                    <div class="text-2xl font-mono font-black text-indigo-400" id="progressPercent">0%</div>
+                </div>
+
+                <!-- Progress Bar Linier -->
+                <div class="w-full bg-slate-950 h-3 rounded-full overflow-hidden p-0.5 border border-slate-800/60">
+                    <div id="progressBar" class="bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-500 h-full w-0 rounded-full transition-all duration-200"></div>
+                </div>
+
+                <!-- PANEL KONTROL MULTI-AKSI -->
+                <div class="grid grid-cols-3 gap-2">
+                    <button id="btnPause" class="bg-amber-600 hover:bg-amber-500 text-white font-medium py-2 rounded-xl text-xs transition cursor-pointer flex items-center justify-center gap-1.5">
+                        ⏸️ Pause
+                    </button>
+                    <button id="btnResume" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-xl text-xs transition cursor-pointer flex items-center justify-center gap-1.5">
+                        ▶️ Resume
+                    </button>
+                    <button id="btnCancel" class="bg-red-600 hover:bg-red-500 text-white font-medium py-2 rounded-xl text-xs transition cursor-pointer flex items-center justify-center gap-1.5">
+                        🛑 Cancel & Rollback
+                    </button>
+                    <div class="bg-slate-950 px-3 py-2 rounded-xl border border-slate-800 flex items-center justify-center text-[11px] font-mono text-slate-400" id="netSpeedIndicator">
+                        Idle Mode
                     </div>
                 </div>
 
-                <!-- Action Button -->
-                <button id="btnDeploy" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 active:scale-99 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-xl shadow-indigo-600/10 cursor-pointer tracking-wider uppercase">
-                    Mulai Deploy Proyek
-                </button>
-            </div>
-
-            <!-- Real-Time Progress Bar & Console Log -->
-            <div id="monitorSection" class="hidden space-y-3 border-t border-slate-800 pt-5">
-                <!-- Progress Header -->
-                <div class="flex justify-between text-xs font-semibold">
-                    <span id="progressStatus" class="text-slate-400 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-ping"></span> Mengekstrak struktur data...
-                    </span>
-                    <span id="progressPercent" class="text-indigo-400 font-mono">0%</span>
-                </div>
-                
-                <!-- Line Progress Bar -->
-                <div class="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden p-0.5 border border-slate-800">
-                    <div id="progressBar" class="bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-500 h-full w-0 rounded-full transition-all duration-300 shadow-sm shadow-emerald-500/50"></div>
-                </div>
-
-                <!-- Console Box -->
-                <div id="statusBox" class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono h-36 overflow-y-auto space-y-1.5 text-slate-400 custom-scroll shadow-inner">
-                    <!-- Log entries go here dynamically -->
+                <!-- Kotak Console Log Ekstra Lebar -->
+                <div id="statusBox" class="bg-slate-950 border border-slate-800 text-slate-300 rounded-xl p-4 text-xs font-mono h-48 overflow-y-auto space-y-1.5 custom-scroll shadow-inner">
+                    <!-- Log sistem masuk ke sini secara real-time -->
                 </div>
             </div>
+        </div>
 
+        <!-- PANEL KANAN: Statistik Widget & Riwayat (1 Kolom) -->
+        <div class="space-y-6">
+            <!-- Embed Info Widget / Stats Card -->
+            <div class="bg-gradient-to-b from-slate-900 to-indigo-950/40 p-6 rounded-3xl border border-slate-800/80 space-y-4">
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    📊 Statistik Sinkronisasi
+                </h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/40">
+                        <span class="text-xs text-slate-500 block">Total Push</span>
+                        <span class="text-xl font-bold font-mono text-slate-200" id="statTotalPush">0</span>
+                    </div>
+                    <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/40">
+                        <span class="text-xs text-slate-500 block">File Sukses</span>
+                        <span class="text-xl font-bold font-mono text-emerald-400" id="statSuccessFiles">0</span>
+                    </div>
+                </div>
+                <!-- Tips Penggunaan / Embed Deskripsi -->
+                <div class="bg-indigo-950/30 border border-indigo-800/20 rounded-xl p-3.5 text-xs text-indigo-300 space-y-1.5">
+                    <p class="font-bold flex items-center gap-1">💡 Cara Kerja Mekanisme Safe-State:</p>
+                    <p class="text-indigo-400/90 leading-relaxed">Jika koneksi terputus atau halaman tidak sengaja ter-refresh tengah jalan, sistem tidak akan merusak riwayat komit Git Anda. Cukup hubungkan ulang token, maka antrean file akan dilanjutkan dari titik terakhir.</p>
+                </div>
+            </div>
+
+            <!-- Card Riwayat Aktivitas Lokal (IndexedDB Persisted) -->
+            <div class="backdrop-blur-md bg-slate-900/80 p-6 rounded-3xl border border-slate-800 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest">🕒 Riwayat Deploy</h3>
+                    <button id="btnClearHistory" class="text-[10px] text-slate-500 hover:text-red-400 uppercase font-bold tracking-wider">Hapus</button>
+                </div>
+                <div id="historyContainer" class="space-y-2 max-h-64 overflow-y-auto custom-scroll text-xs">
+                    <p class="text-slate-500 italic text-center py-4">Belum ada riwayat pengerjaan.</p>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- CODE SCRIPT LOGIC ENGINE -->
     <script>
-        // DOM Elements
-        const githubTokenInput = document.getElementById('githubToken');
+        // --- 1. CORE DATABASE LAYER (INDEXEDDB) ---
+        const DB_NAME = 'ZipForgeProDB';
+        const DB_VERSION = 1;
+        let db = null;
+
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onerror = e => reject(e);
+                request.onsuccess = e => { db = e.target.result; resolve(db); };
+                request.onupgradeneeded = e => {
+                    const database = e.target.result;
+                    if (!database.objectStoreNames.contains('state')) database.createObjectStore('state');
+                    if (!database.objectStoreNames.contains('queue')) database.createObjectStore('queue', { keyPath: 'id', autoIncrement: true });
+                    if (!database.objectStoreNames.contains('history')) database.createObjectStore('history', { keyPath: 'id', autoIncrement: true });
+                    if (!database.objectStoreNames.contains('sessionTrack')) database.createObjectStore('sessionTrack', { keyPath: 'path' });
+                };
+            });
+        }
+
+        async function saveState(key, val) {
+            return new Promise(r => {
+                const tx = db.transaction('state', 'readwrite');
+                tx.objectStore('state').put(val, key);
+                tx.oncomplete = () => r();
+            });
+        }
+
+        async function getState(key) {
+            return new Promise(r => {
+                const tx = db.transaction('state', 'readonly');
+                const req = tx.objectStore('state').get(key);
+                req.onsuccess = () => r(req.result);
+            });
+        }
+
+        async function clearStore(storeName) {
+            return new Promise(r => {
+                const tx = db.transaction(storeName, 'readwrite');
+                tx.objectStore(storeName).clear();
+                tx.oncomplete = () => r();
+            });
+        }
+
+        // --- 2. MANAGEMENT STATE & ANTRIAN GLOBAL ---
+        let uploadQueue = [];
+        let currentIdx = 0;
+        let isPaused = false;
+        let isCancelled = false;
+        let activeToken = "";
+        let activeUser = "";
+        let activeRepo = "";
+        let currentSessionTrack = []; // Menyimpan daftar file yang sudah sukses diupload di sesi ini untuk opsi Rollback Cancel
+
+        // DOM Pointers
+        const tokenInput = document.getElementById('githubToken');
         const btnConnect = document.getElementById('btnConnect');
         const connectText = document.getElementById('connectText');
         const connectSpinner = document.getElementById('connectSpinner');
@@ -147,40 +256,44 @@
         const userAvatar = document.getElementById('userAvatar');
         const usernameDisplay = document.getElementById('usernameDisplay');
         const repoSection = document.getElementById('repoSection');
-        
         const repoAction = document.getElementById('repoAction');
         const repoSelect = document.getElementById('repoSelect');
         const newRepoInput = document.getElementById('newRepoInput');
-        
+        const deployStrategy = document.getElementById('deployStrategy');
         const zipFileInput = document.getElementById('zipFile');
         const fileNameDisplay = document.getElementById('fileName');
-        const dropzone = document.getElementById('dropzone');
-        
         const btnDeploy = document.getElementById('btnDeploy');
         const monitorSection = document.getElementById('monitorSection');
         const progressStatus = document.getElementById('progressStatus');
         const progressPercent = document.getElementById('progressPercent');
         const progressBar = document.getElementById('progressBar');
         const statusBox = document.getElementById('statusBox');
+        const fileCountStat = document.getElementById('fileCountStat');
+        const btnPause = document.getElementById('btnPause');
+        const btnResume = document.getElementById('btnResume');
+        const btnCancel = document.getElementById('btnCancel');
+        const netSpeedIndicator = document.getElementById('netSpeedIndicator');
+        const recoveryBadge = document.getElementById('recoveryBadge');
+        const historyContainer = document.getElementById('historyContainer');
+        const btnClearHistory = document.getElementById('btnClearHistory');
+        const statTotalPush = document.getElementById('statTotalPush');
+        const statSuccessFiles = document.getElementById('statSuccessFiles');
 
-        let globalUsername = "";
-
-        // UI Drag and Drop Styling Effects
-        zipFileInput.addEventListener('dragenter', () => dropzone.classList.add('border-indigo-500', 'bg-slate-900/60'));
-        zipFileInput.addEventListener('dragleave', () => dropzone.classList.remove('border-indigo-500', 'bg-slate-900/60'));
-        zipFileInput.addEventListener('drop', () => dropzone.classList.remove('border-indigo-500', 'bg-slate-900/60'));
+        // Drag & drop visual effects
+        const dropzone = document.getElementById('dropzone');
+        zipFileInput.addEventListener('dragenter', () => dropzone.classList.add('border-indigo-500', 'bg-slate-900/50'));
+        zipFileInput.addEventListener('dragleave', () => dropzone.classList.remove('border-indigo-500', 'bg-slate-900/50'));
+        zipFileInput.addEventListener('drop', () => dropzone.classList.remove('border-indigo-500', 'bg-slate-900/50'));
 
         zipFileInput.addEventListener('change', (e) => {
             if(e.target.files.length > 0) {
                 fileNameDisplay.textContent = `${e.target.files[0].name} (${(e.target.files[0].size/1024/1024).toFixed(2)} MB)`;
-                fileNameDisplay.classList.remove('text-slate-300');
-                fileNameDisplay.classList.add('text-indigo-400', 'font-semibold');
+                fileNameDisplay.classList.add('text-indigo-400', 'font-bold');
             }
         });
 
-        // Toggle antara pilih repo existing vs buat baru
         repoAction.addEventListener('change', (e) => {
-            if (e.target.value === 'create') {
+            if(e.target.value === 'create') {
                 repoSelect.classList.add('hidden');
                 newRepoInput.classList.remove('hidden');
             } else {
@@ -189,192 +302,392 @@
             }
         });
 
-        // 1. Hubungkan Akun & Ambil List Repositori Otomatis
-        btnConnect.addEventListener('click', async () => {
-            const token = githubTokenInput.value.trim();
-            if (!token) {
-                alert('Silakan masukkan GitHub Token Anda terlebih dahulu!');
-                return;
-            }
-
-            // UI Loading state
-            connectText.textContent = "Connecting...";
-            connectSpinner.classList.remove('hidden');
-            btnConnect.disabled = true;
-
-            try {
-                // Fetch Data User Profil
-                const userRes = await fetch('https://api.github.com/user', {
-                    headers: { 'Authorization': `token ${token}` }
-                });
-
-                if(!userRes.ok) throw new Error('Token tidak valid atau kadaluarsa.');
-                const userData = await userRes.json();
-                globalUsername = userData.login;
-
-                // Tampilkan Info Profil Premium
-                userAvatar.src = userData.avatar_url;
-                usernameDisplay.textContent = userData.name || userData.login;
-                profileBadge.classList.remove('hidden');
-                profileBadge.classList.add('flex');
-
-                // Fetch Semua Repo Milik User (Maks 100 terupdate)
-                const reposRes = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', {
-                    headers: { 'Authorization': `token ${token}` }
-                });
-                const reposData = await reposRes.json();
-
-                // Bersihkan dropdown & isi otomatis
-                repoSelect.innerHTML = '';
-                if(reposData.length === 0) {
-                    repoSelect.innerHTML = '<option value="">Tidak ada repo ditemukan</option>';
-                } else {
-                    reposData.forEach(repo => {
-                        const opt = document.createElement('option');
-                        opt.value = repo.name;
-                        opt.textContent = repo.name + (repo.private ? ' 🔒' : ' 🌐');
-                        repoSelect.appendChild(opt);
-                    });
-                }
-
-                // Aktifkan Form Bagian Bawah
-                repoSection.classList.remove('opacity-40', 'pointer-events-none');
-                connectText.textContent = "Connected";
-                connectSpinner.classList.add('hidden');
-                githubTokenInput.disabled = true;
-
-            } catch (err) {
-                alert(err.message);
-                connectText.textContent = "Hubungkan";
-                connectSpinner.classList.add('hidden');
-                btnConnect.disabled = false;
-            }
-        });
-
-        // Helper untuk mencetak Log ke Terminal Console UI
         function printLog(text, type = 'info') {
             const line = document.createElement('div');
             if(type === 'error') line.className = 'text-red-400 font-semibold';
             else if(type === 'success') line.className = 'text-emerald-400 font-semibold';
+            else if(type === 'warn') line.className = 'text-amber-400';
             else line.className = 'text-slate-300';
-            
             line.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;
             statusBox.appendChild(line);
             statusBox.scrollTop = statusBox.scrollHeight;
         }
 
-        // 2. Inti Proses: Ekstraksi ZIP & Real-Time Upload ke GitHub
-        btnDeploy.addEventListener('click', async () => {
-            const token = githubTokenInput.value.trim();
-            const isCreateNew = repoAction.value === 'create';
-            const repoName = isCreateNew ? newRepoInput.value.trim() : repoSelect.value;
-            const file = zipFileInput.files[0];
+        // --- 3. PROSES AUTENTIKASI ---
+        btnConnect.addEventListener('click', () => connectGitHub(tokenInput.value.trim()));
 
-            if (!repoName || !file) {
-                alert('Pastikan Repositori telah ditentukan dan File ZIP telah diunggah!');
+        async function connectGitHub(token, autoRestore = false) {
+            if(!token) return;
+            connectText.textContent = "Verifikasi...";
+            connectSpinner.classList.remove('hidden');
+            btnConnect.disabled = true;
+
+            try {
+                const res = await fetch('https://api.github.com/user', { headers: { 'Authorization': `token ${token}` } });
+                if(!res.ok) throw new Error('Token salah atau kadaluarsa.');
+                const userData = await res.json();
+                
+                activeToken = token;
+                activeUser = userData.login;
+                usernameDisplay.textContent = userData.name || userData.login;
+                userAvatar.src = userData.avatar_url;
+                
+                tokenInput.value = token;
+                tokenInput.disabled = true;
+                btnConnect.classList.add('hidden');
+                profileBadge.classList.remove('hidden');
+                profileBadge.classList.add('flex');
+
+                // Ambil daftar repo
+                const rRes = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', { headers: { 'Authorization': `token ${token}` } });
+                const repos = await rRes.json();
+                
+                repoSelect.innerHTML = '';
+                repos.forEach(r => {
+                    const o = document.createElement('option');
+                    o.value = r.name;
+                    o.textContent = `${r.name} ${r.private ? '🔒' : '🌐'}`;
+                    repoSelect.appendChild(o);
+                });
+
+                repoSection.classList.remove('opacity-30', 'pointer-events-none');
+                if(!autoRestore) {
+                    await saveState('savedToken', token);
+                    printLog(`Akun terhubung: @${activeUser}`, 'success');
+                }
+            } catch(e) {
+                printLog(e.message, 'error');
+                btnConnect.disabled = false;
+                connectText.textContent = "Koneksikan Akun";
+                connectSpinner.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('btnDisconnect').addEventListener('click', async () => {
+            await clearStore('state');
+            await clearStore('queue');
+            await clearStore('sessionTrack');
+            location.reload();
+        });
+
+        // --- 4. ALUR ENGINE UTAMA (DEPLOYMENT LOOP) ---
+        btnDeploy.addEventListener('click', async () => {
+            const isCreate = repoAction.value === 'create';
+            const repoName = isCreate ? newRepoInput.value.trim() : repoSelect.value;
+            const file = zipFileInput.files[0];
+            const strategy = deployStrategy.value;
+
+            if(!repoName || !file) {
+                alert('Tentukan nama repositori dan unggah berkas ZIP terlebih dahulu!');
                 return;
             }
 
-            // Tampilkan Monitor Log & Reset Progress
+            activeRepo = repoName;
             monitorSection.classList.remove('hidden');
             statusBox.innerHTML = '';
-            progressBar.style.width = '0%';
-            progressPercent.textContent = '0%';
+            isCancelled = false;
+            isPaused = false;
+            currentIdx = 0;
+            currentSessionTrack = [];
             
-            printLog('🚀 Memulai mesin deploy ZipForge...');
+            await clearStore('queue');
+            await clearStore('sessionTrack');
 
             try {
-                // Fase 1: Membaca Struktur File ZIP
-                printLog('Menguraikan berkas zip di memori browser...');
+                printLog('Mengurai struktur kompresi ZIP di memori...');
                 const zip = await JSZip.loadAsync(file);
-                const filesQueue = [];
-
-                for (const path in zip.files) {
-                    const entry = zip.files[path];
-                    if (!entry.dir) {
-                        const base64 = await entry.async('base64');
-                        filesQueue.push({ path: path, content: base64 });
+                const rawQueue = [];
+                
+                for(const path in zip.files) {
+                    if(!zip.files[path].dir) {
+                        const b64 = await zip.files[path].async('base64');
+                        rawQueue.push({ path: path, content: b64 });
                     }
                 }
 
-                const totalFiles = filesQueue.length;
-                printLog(`Struktur terbaca! Terdeteksi ${totalFiles} berkas siap di-upload.`, 'success');
+                if(rawQueue.length === 0) throw new Error('Arsip ZIP kosong.');
+                printLog(`Ditemukan ${rawQueue.length} file. Menyimpan antrean ke database lokal...`, 'success');
 
-                if(totalFiles === 0) throw new Error('Berkas ZIP kosong atau tidak valid.');
+                // Simpan antrean ke IndexedDB agar aman dari refresh
+                const tx = db.transaction('queue', 'readwrite');
+                rawQueue.forEach(item => tx.objectStore('queue').add(item));
+                
+                await saveState('activeRepo', activeRepo);
+                await saveState('currentIdx', 0);
+                await saveState('strategy', strategy);
+                await saveState('isRunning', true);
 
-                // Fase 2: Buat Repositori Otomatis (Jika pilih mode buat baru)
-                if (isCreateNew) {
-                    printLog(`Menciptakan repositori baru [${repoName}] di GitHub...`);
-                    const createRes = await fetch('https://api.github.com/user/repos', {
+                uploadQueue = rawQueue;
+                
+                // Eksekusi Pembuatan / Pembersihan Repo sebelum upload massal
+                if(isCreate) {
+                    printLog(`Membangun repositori baru: [${activeRepo}]...`);
+                    await fetch('https://api.github.com/user/repos', {
                         method: 'POST',
-                        headers: {
-                            'Authorization': `token ${token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ name: repoName, private: false, auto_init: true })
+                        headers: { 'Authorization': `token ${activeToken}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: activeRepo, private: false, auto_init: true })
                     });
-                    
-                    if(createRes.status === 201) {
-                        printLog(`Repositori [${repoName}] berhasil dibangun otomatis!`, 'success');
-                        await new Promise(r => setTimeout(r, 2000)); // Delay aman tunggu inisialisasi GitHub server
-                    } else {
-                        printLog('Gagal membuat repo baru atau repo sudah ada, mencoba menulis data langsung...', 'error');
-                    }
+                    await new Promise(r => setTimeout(r, 2500)); // Jeda propagasi server GitHub
+                } else if(strategy === 'replace') {
+                    await purgeRepository();
                 }
 
-                // Fase 3: Upload Iteratif Real-Time dengan Kalkulasi Progress
-                let currentUploaded = 0;
+                executeUploadLoop();
 
-                for (const item of filesQueue) {
-                    progressStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Mengirim: ${item.path}`;
-                    
-                    // Cek SHA file lawas (agar bisa ditimpa / replace aman tanpa bentrok)
+            } catch(e) {
+                printLog(e.message, 'error');
+            }
+        });
+
+        // Fitur Pembersihan Total Isi Repositori (Clean Replace)
+        async function purgeRepository() {
+            printLog('Strategi Clean Replace Aktif: Mengambil daftar struktur file lama di GitHub...', 'warn');
+            try {
+                const res = await fetch(`https://api.github.com/repos/${activeUser}/${activeRepo}/git/trees/main?recursive=1`, {
+                    headers: { 'Authorization': `token ${activeToken}` }
+                });
+                if(res.ok) {
+                    const data = await res.json();
+                    if(data.tree) {
+                        const filesToDelete = data.tree.filter(node => node.type === 'blob');
+                        printLog(`Menghapus ${filesToDelete.length} berkas lama agar repositori steril...`);
+                        for(const f of filesToDelete) {
+                            await fetch(`https://api.github.com/repos/${activeUser}/${activeRepo}/contents/${f.path}`, {
+                                method: 'DELETE',
+                                headers: { 'Authorization': `token ${activeToken}`, 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ message: `ZipForge Purge: ${f.path}`, sha: f.sha })
+                            });
+                        }
+                        printLog('Sterilisasi repositori selesai.', 'success');
+                    }
+                }
+            } catch(e) {
+                printLog('Gagal sterilisasi repo sepenuhnya, melompati fase pembersihan...', 'error');
+            }
+        }
+
+        // Inti Mesin Pemroses Loop Unggahan Sekaligus Validasi Status Kontrol
+        async function executeUploadLoop() {
+            const total = uploadQueue.length;
+            netSpeedIndicator.textContent = "🚀 Active Link";
+
+            while(currentIdx < total) {
+                if(isPaused) {
+                    netSpeedIndicator.textContent = "⏸️ Paused";
+                    printLog('Proses penyiaran ditangguhkan sementara.', 'warn');
+                    await saveState('isRunning', false);
+                    return;
+                }
+                if(isCancelled) {
+                    netSpeedIndicator.textContent = "🛑 Cancelled";
+                    await runRollbackCleanup();
+                    return;
+                }
+
+                const item = uploadQueue[currentIdx];
+                progressStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> Mengirim: ${item.path}`;
+                
+                try {
+                    // Periksa SHA berkas eksis untuk mekanisme replace aman
                     let sha = null;
-                    const checkRes = await fetch(`https://api.github.com/repos/${globalUsername}/${repoName}/contents/${item.path}`, {
-                        headers: { 'Authorization': `token ${token}` }
+                    const cRes = await fetch(`https://api.github.com/repos/${activeUser}/${activeRepo}/contents/${item.path}`, {
+                        headers: { 'Authorization': `token ${activeToken}` }
                     });
-                    if (checkRes.ok) {
-                        const meta = await checkRes.json();
+                    if(cRes.ok) {
+                        const meta = await cRes.json();
                         sha = meta.sha;
                     }
 
-                    // Eksekusi PUSH ke GitHub API
-                    const uploadRes = await fetch(`https://api.github.com/repos/${globalUsername}/${repoName}/contents/${item.path}`, {
+                    // Request PUSH utama ke REST API GitHub
+                    const pushRes = await fetch(`https://api.github.com/repos/${activeUser}/${activeRepo}/contents/${item.path}`, {
                         method: 'PUT',
-                        headers: {
-                            'Authorization': `token ${token}`,
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'Authorization': `token ${activeToken}`, 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            message: `ZipForge Auto-Sync: ${item.path}`,
+                            message: `ZipForge Sync: ${item.path}`,
                             content: item.content,
                             sha: sha
                         })
                     });
 
-                    if (!uploadRes.ok) {
-                        printLog(`❌ Gagal mengunggah file: ${item.path}`, 'error');
+                    if(pushRes.ok) {
+                        const resData = await pushRes.json();
+                        printLog(`Sukses terunggah: ${item.path}`);
+                        
+                        // Daftarkan ke track rollback sesi ini & simpan ke DB lokal
+                        const trackObj = { path: item.path, sha: resData.content.sha };
+                        currentSessionTrack.push(trackObj);
+                        
+                        const sTx = db.transaction('sessionTrack', 'readwrite');
+                        sTx.objectStore('sessionTrack').put(trackObj);
                     } else {
-                        printLog(`✓ Berhasil diunggah: ${item.path}`);
+                        printLog(`⚠️ Galat pada file ${item.path}, melewati...`, 'error');
                     }
 
-                    // Hitung persentase real-time
-                    currentUploaded++;
-                    const percent = Math.round((currentUploaded / totalFiles) * 100);
-                    progressBar.style.width = `${percent}%`;
-                    progressPercent.textContent = `${percent}%`;
+                } catch(err) {
+                    printLog(`Gangguan jaringan pada file: ${item.path}`, 'error');
                 }
 
-                // Selesai Sempurna
-                progressStatus.innerHTML = `🟢 Selesai Terdistribusi!`;
-                printLog(`✨ Selamat! Semua ${totalFiles} file telah terekstrak & sukses di-push ke GitHub!`, 'success');
-                setTimeout(() => alert('Deploy Sukses! Silakan cek repositori GitHub Anda.'), 300);
+                currentIdx++;
+                await saveState('currentIdx', currentIdx);
+                
+                // Update interface kemajuan presentase real-time
+                const pct = Math.round((currentIdx / total) * 100);
+                progressBar.style.width = `${pct}%`;
+                progressPercent.textContent = `${pct}%`;
+                fileCountStat.textContent = `${currentIdx} dari ${total} file terproses`;
+            }
 
-            } catch (err) {
-                progressStatus.innerHTML = `🔴 Proses Terhenti`;
-                printLog(`Kritikal Error: ${err.message}`, 'error');
+            // Selesai Sempurna Tanpa Interupsi
+            progressStatus.innerHTML = `🟢 Sinkronisasi Selesai`;
+            printLog('🎉 Hebat! Seluruh siklus berkas berhasil dilepaskan ke repositori GitHub.', 'success');
+            
+            // Masukkan data ke widget riwayat pengerjaan lokal
+            const hTx = db.transaction('history', 'readwrite');
+            hTx.objectStore('history').add({ repo: activeRepo, time: new Date().toLocaleString(), totalFiles: total });
+            
+            updateHistoryUI();
+            updateStatsWidget(1, total);
+            resetDeploymentState();
+        }
+
+        // --- 5. PANEL KONTROL MULTI-AKSI (PAUSE, RESUME, CANCEL & ROLLBACK) ---
+        btnPause.addEventListener('click', () => {
+            isPaused = true;
+            btnPause.classList.add('hidden');
+            btnResume.classList.remove('hidden');
+        });
+
+        btnResume.addEventListener('click', () => {
+            isPaused = false;
+            btnResume.classList.add('hidden');
+            btnPause.classList.remove('hidden');
+            printLog('Melanjutkan pemrosesan antrean data...', 'info');
+            executeUploadLoop();
+        });
+
+        btnCancel.addEventListener('click', () => {
+            if(confirm('Apakah Anda yakin ingin membatalkan? Seluruh file yang terlanjur terunggah pada sesi ini akan otomatis dihapus kembali (Rollback) dari repositori.')) {
+                isCancelled = true;
+                btnPause.classList.remove('hidden');
+                btnResume.classList.add('hidden');
             }
         });
+
+        // Fitur Rollback: Berjalan mundur menghapus jejak file yang dikirim pada sesi gagal ini
+        async function runRollbackCleanup() {
+            progressStatus.innerHTML = `🔴 Membersihkan Sisa Sesi...`;
+            printLog('Memulai pembersihan paksa (Rollback) untuk merestorasi status repositori...', 'error');
+            
+            for(const file of currentSessionTrack) {
+                printLog(`Menghapus jejak: ${file.path}`);
+                await fetch(`https://api.github.com/repos/${activeUser}/${activeRepo}/contents/${file.path}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `token ${activeToken}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: `ZipForge Rollback & Cleanup`, sha: file.sha })
+                });
+            }
+            
+            printLog('Proses pembatalan total selesai. Repositori dibersihkan.', 'warn');
+            resetDeploymentState();
+        }
+
+        async function resetDeploymentState() {
+            await saveState('isRunning', false);
+            await clearStore('queue');
+            await clearStore('sessionTrack');
+            monitorSection.classList.add('hidden');
+            netSpeedIndicator.textContent = "Idle Mode";
+        }
+
+        // --- 6. CORE AUTO-RESTORE PERSISTENCE MANAGEMENT ---
+        async function checkActiveSession() {
+            await initDB();
+            updateHistoryUI();
+            updateStatsWidget(0,0);
+
+            const savedToken = await getState('savedToken');
+            if(savedToken) {
+                await connectGitHub(savedToken, true);
+                
+                const isRunning = await getState('isRunning');
+                if(isRunning) {
+                    activeRepo = await getState('activeRepo');
+                    currentIdx = await getState('currentIdx');
+                    
+                    // Tarik kembali antrean dari database lokal IndexedDB
+                    const qTx = db.transaction('queue', 'readonly');
+                    const qReq = qTx.objectStore('queue').getAll();
+                    
+                    qReq.onsuccess = async () => {
+                        uploadQueue = qReq.result;
+                        if(uploadQueue.length > 0) {
+                            recoveryBadge.classList.remove('hidden');
+                            recoveryBadge.classList.add('flex');
+                            monitorSection.classList.remove('hidden');
+                            
+                            // Tarik daftar file sukses untuk kebutuhan tracking rollback pasca kecelakaan refresh
+                            const tTx = db.transaction('sessionTrack', 'readonly');
+                            const tReq = tTx.objectStore('sessionTrack').getAll();
+                            tReq.onsuccess = () => { currentSessionTrack = tReq.result; };
+
+                            printLog(`Sesi menggantung ditemukan! Melanjutkan distribusi otomatis di repo [${activeRepo}] mulai dari file ke-${currentIdx + 1}...`, 'warn');
+                            executeUploadLoop();
+                        }
+                    };
+                }
+            }
+        }
+
+        // --- 7. UI DYNAMIC HISTORIES & STATS WIDGET ---
+        function updateHistoryUI() {
+            const tx = db.transaction('history', 'readonly');
+            const req = tx.objectStore('history').getAll();
+            req.onsuccess = () => {
+                const list = req.result;
+                if(list.length === 0) return;
+                historyContainer.innerHTML = '';
+                list.reverse().forEach(h => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-slate-950/40 p-3 rounded-xl border border-slate-800/60 space-y-1';
+                    card.innerHTML = `
+                        <div class="flex justify-between font-semibold text-slate-300">
+                            <span class="truncate max-w-[140px]">📦 ${h.repo}</span>
+                            <span class="text-emerald-400 font-mono">${h.totalFiles} File</span>
+                        </div>
+                        <div class="text-[10px] text-slate-500">${h.time}</div>
+                    `;
+                    historyContainer.appendChild(card);
+                });
+            };
+        }
+
+        async function updateStatsWidget(addPush = 0, addFiles = 0) {
+            let currentPush = parseInt(localStorage.getItem('zf_total_push') || '0');
+            let currentFiles = parseInt(localStorage.getItem('zf_success_files') || '0');
+            
+            currentPush += addPush;
+            currentFiles += addFiles;
+            
+            localStorage.setItem('zf_total_push', currentPush);
+            localStorage.setItem('zf_success_files', currentFiles);
+            
+            statTotalPush.textContent = currentPush;
+            statSuccessFiles.textContent = currentFiles;
+        }
+
+        btnClearHistory.addEventListener('click', async () => {
+            if(confirm('Hapus seluruh riwayat pengerjaan lokal?')) {
+                await clearStore('history');
+                historyContainer.innerHTML = '<p class="text-slate-500 italic text-center py-4">Belum ada riwayat pengerjaan.</p>';
+                localStorage.setItem('zf_total_push', '0');
+                localStorage.setItem('zf_success_files', '0');
+                statTotalPush.textContent = '0';
+                statSuccessFiles.textContent = '0';
+            }
+        });
+
+        // Jalankan inisialisasi boot saat halaman siap render
+        window.addEventListener('DOMContentLoaded', checkActiveSession);
     </script>
 </body>
 </html>
