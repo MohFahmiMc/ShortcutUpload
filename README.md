@@ -1,0 +1,2 @@
+# ShortcutUpload
+ShortcutUpload GitHub zip
